@@ -100,24 +100,7 @@ with col2:
         # Violin plot
         fig2 = px.violin(plot_df, x=cat_var, y=num_var, box=True, points=False, title=f"Violin plot of {num_var} by {cat_var}")
         st.plotly_chart(fig2, width='stretch')
-col1, col2 = st.columns(2)
-with col1:
-    num_var = st.selectbox("Numeric variable", numerical_cols, key="num_for_cat")
-    cat_var = st.selectbox("Categorical variable", categorical_cols, key="cat_for_num")
-    agg_func = st.selectbox("Aggregation", ['mean', 'median', 'count'], key="agg_func")
-
-with col2:
-    plot_df = df[[num_var, cat_var]].dropna().copy()
-    plot_df[num_var] = plot_df[num_var].astype('float64')
-    if len(plot_df) == 0:
-        st.warning("No data available for the selected pair after dropping missing values.")
-    else:
-        st.subheader(f"Distribution of {num_var} across {cat_var}")
-        fig1 = px.box(plot_df, x=cat_var, y=num_var, points='outliers', title=f"Box plot of {num_var} by {cat_var}")
-        st.plotly_chart(fig1, width='stretch')
-        # Plotly valid 'points' values: 'all', 'outliers', 'suspectedoutliers', or False
-        fig2 = px.violin(plot_df, x=cat_var, y=num_var, box=True, points=False, title=f"Violin plot of {num_var} by {cat_var}")
-        st.plotly_chart(fig2, width='stretch')
+# (Removed duplicated Numeric-vs-Categorical control block — first instance above is retained)
 
 # Grouped summary
 if st.button("Show grouped summary"):
