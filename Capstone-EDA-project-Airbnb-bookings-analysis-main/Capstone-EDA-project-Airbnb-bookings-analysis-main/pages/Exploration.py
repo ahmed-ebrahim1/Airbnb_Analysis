@@ -5,8 +5,16 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
-from ydata_profiling import ProfileReport
 import streamlit.components.v1 as components
+
+# Safe import of ydata-profiling: avoid crashing the app if package or dependencies
+# (e.g. pkg_resources/setuptools) are missing in the runtime environment.
+ProfileReport = None
+_profile_import_error = None
+try:
+    from ydata_profiling import ProfileReport
+except Exception as e:
+    _profile_import_error = e
 
 # Set page configuration
 st.set_page_config(page_title="Data Exploration & EDA", layout="wide")
@@ -64,25 +72,36 @@ with st.expander("🔧 Generate Comprehensive Data Profile Report", expanded=Fal
     
     if st.button("🚀 Generate YData Profile Report"):
         with st.spinner("Generating comprehensive profile report... This may take a moment..."):
-            try:
-                # Generate the profile report
-                profile = ProfileReport(df, title="Airbnb NYC 2019 Dataset Report", minimal=False)
-                profile_html = profile.to_html()
-                
-                # Display the report
-                components.html(profile_html, height=800, scrolling=True)
-                st.success("✅ Profile report generated successfully!")
-                
-                # Option to download
-                st.download_button(
-                    label="📥 Download Full Report (HTML)",
-                    data=profile_html,
-                    file_name="Airbnb_NYC_2019_Profile_Report.html",
-                    mime="text/html"
+            # If the import failed earlier, show the error and actionable instructions
+            if ProfileReport is None:
+                st.error("ydata-profiling is not available in this environment.")
+                st.write("Import error details:")
+                st.code(str(_profile_import_error))
+                st.info(
+                    "To fix this, ensure your runtime includes the required packages.\n"
+                    "If you're running locally: `pip install ydata-profiling setuptools`\n"
+                    "If deploying (Streamlit Cloud or similar), add `ydata-profiling` and `setuptools` to your requirements.txt and redeploy."
                 )
-                    
-            except Exception as e:
-                st.error(f"❌ Error generating profile: {str(e)}")
+            else:
+                try:
+                    # Generate the profile report
+                    profile = ProfileReport(df, title="Airbnb NYC 2019 Dataset Report", minimal=False)
+                    profile_html = profile.to_html()
+
+                    # Display the report
+                    components.html(profile_html, height=800, scrolling=True)
+                    st.success("✅ Profile report generated successfully!")
+
+                    # Option to download
+                    st.download_button(
+                        label="📥 Download Full Report (HTML)",
+                        data=profile_html,
+                        file_name="Airbnb_NYC_2019_Profile_Report.html",
+                        mime="text/html"
+                    )
+
+                except Exception as e:
+                    st.error(f"❌ Error generating profile: {str(e)}")
 
 st.markdown("---")
 
