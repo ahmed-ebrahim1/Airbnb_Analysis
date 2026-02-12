@@ -1,0 +1,4 @@
+36: leading=0 raw=35,32,83,104,111,119,32,116,104,101,32,102,105,114,115,116,32,102,101,119 repr='# Show the first few rows'
+37: leading=0 raw=115,116,46,115,117,98,104,101,97,100,101,114,40,34,128203,32,70,105,114,115 repr='st.subheader("📋 First Few Rows of Data")'
+38: leading=0 raw=115,116,46,100,97,116,97,102,114,97,109,101,40,100,102,46,104,101,97,100 repr="st.dataframe(df.head(10), width='stretch')"
+39: leading=0 raw= repr=''

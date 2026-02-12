@@ -131,18 +131,20 @@ if selected_num:
         'Statistic': ['Count', 'Mean', 'Median', 'Std Dev', 'Min', 'Q1 (25%)', 'Q2 (50%)', 'Q3 (75%)', 'Max', 'IQR'],
         'Value': [
             len(clean_data),
-            f"{clean_data.mean():.2f}",
-            f"{clean_data.median():.2f}",
-            f"{clean_data.std():.2f}",
-            f"{clean_data.min():.2f}",
-            f"{clean_data.quantile(0.25):.2f}",
-            f"{clean_data.quantile(0.50):.2f}",
-            f"{clean_data.quantile(0.75):.2f}",
-            f"{clean_data.max():.2f}",
-            f"{clean_data.quantile(0.75) - clean_data.quantile(0.25):.2f}"
+            clean_data.mean(),
+            clean_data.median(),
+            clean_data.std(),
+            clean_data.min(),
+            clean_data.quantile(0.25),
+            clean_data.quantile(0.50),
+            clean_data.quantile(0.75),
+            clean_data.max(),
+            clean_data.quantile(0.75) - clean_data.quantile(0.25)
         ]
     })
-    st.dataframe(stats_df, use_container_width=True)
+    # Round numeric display in-place for readability
+    stats_df['Value'] = stats_df['Value'].round(4)
+    st.dataframe(stats_df, width='stretch')
     
     st.markdown("---")
     
@@ -157,15 +159,15 @@ if selected_num:
                           x=selected_num, nbins=50, 
                           title=f"Distribution of {selected_num}",
                           labels={selected_num: selected_num})
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     with col2:
         st.write("**Box Plot (Outlier Detection)**")
         box_data = pd.DataFrame({selected_num: clean_data})
         fig = px.box(box_data, y=selected_num,
-                    title=f"Box Plot of {selected_num}",
-                    points="all")
-        st.plotly_chart(fig, use_container_width=True)
+                title=f"Box Plot of {selected_num}",
+                points="all")
+        st.plotly_chart(fig, width='stretch')
     
     col1, col2 = st.columns(2)
     
@@ -183,7 +185,7 @@ if selected_num:
         # Add diagonal line
         fig.add_shape(type="line", x0=-3, y0=-3, x1=3, y1=3,
                      line=dict(color="red", width=2, dash="dash"))
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     with col2:
         st.write("**Cumulative Distribution Function**")
@@ -191,9 +193,9 @@ if selected_num:
         cdf = np.arange(1, len(sorted_data) + 1) / len(sorted_data)
         cdf_df = pd.DataFrame({'Value': sorted_data, 'CDF': cdf})
         fig = px.line(cdf_df, x='Value', y='CDF',
-                     title="Cumulative Distribution Function",
-                     labels={'Value': selected_num, 'CDF': 'Cumulative Probability'})
-        st.plotly_chart(fig, use_container_width=True)
+                 title="Cumulative Distribution Function",
+                 labels={'Value': selected_num, 'CDF': 'Cumulative Probability'})
+        st.plotly_chart(fig, width='stretch')
     
     st.markdown("---")
     
@@ -272,7 +274,7 @@ if selected_num:
                  annotation_text=f"Upper Bound: {upper_bound:.2f}", annotation_position="top right")
     fig.update_layout(title=f"Distribution with Outlier Bounds - {selected_num}",
                      xaxis_title=selected_num, yaxis_title="Frequency")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 st.markdown("---")
 
@@ -309,7 +311,7 @@ if selected_cat:
         'Cumulative %': (value_counts.values.cumsum() / len(df) * 100).round(2)
     })
     
-    st.dataframe(freq_df, use_container_width=True)
+    st.dataframe(freq_df, width='stretch')
     
     st.markdown("---")
     
@@ -325,13 +327,13 @@ if selected_cat:
                     labels={'Category': selected_cat, 'Count': 'Frequency'},
                     text='Count')
         fig.update_traces(textposition='outside')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     with col2:
         st.write("**Pie Chart - Proportions**")
         fig = px.pie(freq_df, values='Count', names='Category',
                     title=f"Proportion Distribution of {selected_cat}")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     
     # Cumulative percentage chart
     st.write("**Cumulative Percentage Chart (Pareto Analysis)**")
@@ -348,7 +350,7 @@ if selected_cat:
         yaxis2=dict(title="Cumulative % (%)", overlaying='y', side='right'),
         hovermode='x unified'
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     
     st.markdown("---")
     
@@ -459,7 +461,7 @@ with st.expander("📥 Download Complete Statistical Summary"):
     summary_df = pd.DataFrame(summary_data)
     
     # Display
-    st.dataframe(summary_df, use_container_width=True)
+    st.dataframe(summary_df, width='stretch')
     
     # Download option
     csv = summary_df.to_csv(index=False)

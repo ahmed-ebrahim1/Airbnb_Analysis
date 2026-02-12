@@ -75,12 +75,31 @@ with col2:
     pair_plot_data[y_var] = pair_plot_data[y_var].astype('float64')
     fig = px.scatter(pair_plot_data, x=x_var, y=y_var, trendline='ols' if show_trend else None,
                      title=f"Scatter: {x_var} vs {y_var}")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 st.markdown("---")
 
 # Section: Numeric vs Categorical
 st.header("2️⃣ Numeric vs Categorical")
+col1, col2 = st.columns(2)
+with col1:
+    num_var = st.selectbox("Numeric variable", numerical_cols, key="num_for_cat")
+    cat_var = st.selectbox("Categorical variable", categorical_cols, key="cat_for_num")
+    agg_func = st.selectbox("Aggregation", ['mean', 'median', 'count'], key="agg_func")
+
+with col2:
+    plot_df = df[[num_var, cat_var]].dropna().copy()
+    # ensure numeric type for plotting
+    plot_df[num_var] = plot_df[num_var].astype('float64')
+    if len(plot_df) == 0:
+        st.warning("No data available for the selected pair after dropping missing values.")
+    else:
+        st.subheader(f"Distribution of {num_var} across {cat_var}")
+        fig1 = px.box(plot_df, x=cat_var, y=num_var, points='outliers', title=f"Box plot of {num_var} by {cat_var}")
+        st.plotly_chart(fig1, width='stretch')
+        # Violin plot
+        fig2 = px.violin(plot_df, x=cat_var, y=num_var, box=True, points=False, title=f"Violin plot of {num_var} by {cat_var}")
+        st.plotly_chart(fig2, width='stretch')
 col1, col2 = st.columns(2)
 with col1:
     num_var = st.selectbox("Numeric variable", numerical_cols, key="num_for_cat")
@@ -95,18 +114,18 @@ with col2:
     else:
         st.subheader(f"Distribution of {num_var} across {cat_var}")
         fig1 = px.box(plot_df, x=cat_var, y=num_var, points='outliers', title=f"Box plot of {num_var} by {cat_var}")
-        st.plotly_chart(fig1, use_container_width=True)
+        st.plotly_chart(fig1, width='stretch')
         # Plotly valid 'points' values: 'all', 'outliers', 'suspectedoutliers', or False
         fig2 = px.violin(plot_df, x=cat_var, y=num_var, box=True, points=False, title=f"Violin plot of {num_var} by {cat_var}")
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width='stretch')
 
 # Grouped summary
 if st.button("Show grouped summary"):
     grp = df.groupby(cat_var)[num_var].agg(agg_func).sort_values(ascending=False)
     grp = grp.astype('float64')
-    st.dataframe(grp.reset_index().rename(columns={num_var: f"{agg_func}_{num_var}"}), use_container_width=True)
+    st.dataframe(grp.reset_index().rename(columns={num_var: f"{agg_func}_{num_var}"}), width='stretch')
     fig_bar = px.bar(grp, x=grp.index, y=grp.values, title=f"{agg_func.title()} of {num_var} by {cat_var}")
-    st.plotly_chart(fig_bar, use_container_width=True)
+    st.plotly_chart(fig_bar, width='stretch')
 
 st.markdown("---")
 
@@ -123,11 +142,11 @@ with col2:
         st.warning("Not enough data to compute contingency table.")
     else:
         st.subheader("Contingency Table (proportions by row)")
-        st.dataframe(ct.round(3), use_container_width=True)
+        st.dataframe(ct.round(3), width='stretch')
         # Stacked bar chart
         ct_plot = pd.crosstab(df[cat_a], df[cat_b])
         fig = px.bar(ct_plot, barmode='stack', title=f"Stacked Counts: {cat_a} by {cat_b}")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
 st.markdown("---")
 
@@ -141,7 +160,7 @@ if st.button("Compute correlation matrix"):
         corr = num_df.corr().fillna(0)
         fig = px.imshow(corr, text_auto=True, aspect='auto', color_continuous_scale='RdBu', zmin=-1, zmax=1,
                         title="Correlation matrix (numeric features)")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
 st.markdown("---")
 

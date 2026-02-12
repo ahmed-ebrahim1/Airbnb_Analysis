@@ -144,7 +144,7 @@ with col1:
     dtype_counts = df.dtypes.astype(str).value_counts()
     fig = px.pie(values=dtype_counts.values, names=dtype_counts.index,
                  title="Distribution of Data Types")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with col2:
     st.write("**Column Types Summary:**")
@@ -152,7 +152,7 @@ with col2:
         'Data Type': dtype_counts.index,
         'Count': dtype_counts.values
     })
-    st.dataframe(type_summary, use_container_width=True)
+    st.dataframe(type_summary, width='stretch')
 
 st.markdown("---")
 
@@ -166,9 +166,11 @@ with tab1:
     numerical_cols = df.select_dtypes(include=['number']).columns.tolist()
     
     st.write("**Statistical Summary:**")
-    st.dataframe(df[numerical_cols].describe().T, use_container_width=True)
+    st.dataframe(df[numerical_cols].describe().T, width='stretch')
     
     st.write("**Distributions:**")
+    st.plotly_chart(fig, width='stretch')
+    
     cols_to_plot = numerical_cols[:4]
     
     fig = make_subplots(
@@ -187,7 +189,7 @@ with tab1:
         )
     
     fig.update_layout(height=600, showlegend=False)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
     
     st.write("**Box Plot for Outlier Detection:**")
     selected_num_col = st.selectbox("Select a numerical variable:", numerical_cols)
@@ -198,7 +200,7 @@ with tab1:
         y=selected_num_col, 
         title=f"Box Plot of {selected_num_col}"
     )
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with tab2:
     st.subheader("🏷️ Categorical Variables Analysis")
@@ -213,7 +215,7 @@ with tab2:
             fig = px.bar(x=value_counts.index, y=value_counts.values.astype('float64'),
                         title=f"Value Counts: {selected_cat_col}",
                         labels={'x': selected_cat_col, 'y': 'Count'})
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         with col2:
             st.write(f"**Summary for {selected_cat_col}:**")
             summary_cat = pd.DataFrame({
@@ -221,7 +223,7 @@ with tab2:
                 'Most Common': [value_counts.index[0] if not value_counts.empty else "N/A"],
                 'Missing Values': [df[selected_cat_col].isnull().sum()]
             })
-            st.dataframe(summary_cat, use_container_width=True)
+            st.dataframe(summary_cat, width='stretch')
 
 st.markdown("---")
 
@@ -237,7 +239,7 @@ with tab1:
     if not numerical_df.empty:
         corr_matrix = numerical_df.corr().fillna(0)
         fig = px.imshow(corr_matrix, text_auto=True, title="Correlation Matrix", color_continuous_scale="RdBu", zmin=-1, zmax=1)
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
 with tab2:
     st.subheader("💰 Price vs Room Type")
@@ -246,7 +248,7 @@ with tab2:
     plot_df['price'] = plot_df['price'].astype('float64')
     
     fig = px.box(plot_df, x='room_type', y='price', title="Price by Room Type")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 with tab3:
     st.subheader("🗺️ Borough Analysis")
@@ -254,12 +256,12 @@ with tab3:
     with col1:
         counts = df['neighbourhood_group'].value_counts()
         fig = px.pie(values=counts.values.astype('float64'), names=counts.index, title="Listings by Borough")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
     with col2:
         # Cast price to float for mean calculation
         avg_p = df.groupby('neighbourhood_group')['price'].mean().astype('float64').sort_values()
         fig = px.bar(x=avg_p.index, y=avg_p.values, title="Avg Price by Borough")
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
 st.markdown("---")
 
@@ -283,6 +285,6 @@ if selected_col:
         st.metric("Upper Bound", f"{upper:.2f}")
 
     fig = px.histogram(data_series, title=f"Distribution of {selected_col}")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, width='stretch')
 
 st.info("Exploration complete. Standardized all data types to float64 to prevent JSON serialization errors.")

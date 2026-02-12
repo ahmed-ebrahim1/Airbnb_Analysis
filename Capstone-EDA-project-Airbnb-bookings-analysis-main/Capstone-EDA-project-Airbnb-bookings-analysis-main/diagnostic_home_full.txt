@@ -1,0 +1,140 @@
+001: leading=0 repr='import streamlit as st'
+002: leading=0 repr='import pandas as pd'
+003: leading=0 repr='import plotly.express as px'
+004: leading=0 repr='import numpy as np'
+005: leading=0 repr=''
+006: leading=0 repr='# Set page configuration'
+007: leading=0 repr='st.set_page_config(page_title="Airbnb NYC 2019 - Data Description", layout="wide")'
+008: leading=0 repr=''
+009: leading=0 repr='# Title and description'
+010: leading=0 repr='st.title("📊 Airbnb NYC 2019 Dataset - Data Description")'
+011: leading=0 repr='st.markdown("---")'
+012: leading=0 repr=''
+013: leading=0 repr='# Load the data'
+014: leading=0 repr='@st.cache_data'
+015: leading=0 repr='def load_data():'
+016: leading=4 repr='    import os'
+017: leading=4 repr="    csv_path = os.path.join(os.path.dirname(__file__), 'Airbnb NYC 2019.csv')"
+018: leading=4 repr='    df = pd.read_csv(csv_path)'
+019: leading=4 repr='    return df'
+020: leading=0 repr=''
+021: leading=0 repr='df = load_data()'
+022: leading=0 repr=''
+023: leading=0 repr='# Display basic information'
+024: leading=0 repr='col1, col2, col3, col4 = st.columns(4)'
+025: leading=0 repr='with col1:'
+026: leading=4 repr='    st.metric("Total Records", f"{len(df):,}")'
+027: leading=0 repr='with col2:'
+028: leading=4 repr='    st.metric("Total Columns", df.shape[1])'
+029: leading=0 repr='with col3:'
+030: leading=4 repr='    st.metric("Missing Values", df.isnull().sum().sum())'
+031: leading=0 repr='with col4:'
+032: leading=4 repr='    st.metric("Memory Usage", f"{df.memory_usage(deep=True).sum() / 1024**2:.2f} MB")'
+033: leading=0 repr=''
+034: leading=0 repr='st.markdown("---")'
+035: leading=0 repr=''
+036: leading=0 repr='# Show the first few rows'
+037: leading=0 repr='st.subheader("📋 First Few Rows of Data")'
+038: leading=0 repr="st.dataframe(df.head(10), width='stretch')"
+039: leading=0 repr=''
+040: leading=0 repr='st.markdown("---")'
+041: leading=0 repr=''
+042: leading=0 repr='# Data types and missing values'
+043: leading=0 repr='st.subheader("📌 Data Types and Missing Values")'
+044: leading=0 repr='data_info = pd.DataFrame({'
+045: leading=4 repr="    'Column': df.columns,"
+046: leading=4 repr="    'Data Type': df.dtypes.astype(str).values,"
+047: leading=4 repr="    'Non-Null Count': df.notnull().sum().values,"
+048: leading=4 repr="    'Unique Values': df.nunique().values"
+049: leading=0 repr='})'
+050: leading=0 repr="st.dataframe(data_info, width='stretch')"
+051: leading=0 repr=''
+052: leading=0 repr='st.markdown("---")'
+053: leading=0 repr=''
+054: leading=0 repr='# Detailed column descriptions'
+055: leading=0 repr='st.subheader("📝 Detailed Column Descriptions")'
+056: leading=0 repr=''
+057: leading=0 repr='column_descriptions = {'
+058: leading=4 repr="    'id': 'Unique identifier for each listing',"
+059: leading=4 repr="    'name': 'Name/title of the Airbnb listing',"
+060: leading=4 repr="    'host_id': 'Unique identifier for the host',"
+061: leading=4 repr="    'host_name': 'Name of the host',"
+062: leading=4 repr="    'neighbourhood_group': 'General area/borough (e.g., Brooklyn, Manhattan)',"
+063: leading=4 repr="    'neighbourhood': 'Specific neighbourhood within the borough',"
+064: leading=4 repr="    'latitude': 'Latitude coordinate of the listing',"
+065: leading=4 repr="    'longitude': 'Longitude coordinate of the listing',"
+066: leading=4 repr="    'room_type': 'Type of room (Entire home/apt, Private room, Shared room)',"
+067: leading=4 repr="    'price': 'Price per night in USD',"
+068: leading=4 repr="    'minimum_nights': 'Minimum number of nights required for booking',"
+069: leading=4 repr="    'number_of_reviews': 'Total number of reviews received',"
+070: leading=4 repr="    'last_review': 'Date of the most recent review (YYYY-MM-DD)',"
+071: leading=4 repr="    'reviews_per_month': 'Average reviews per month',"
+072: leading=4 repr="    'calculated_host_listings_count': 'Total number of listings by this host',"
+073: leading=4 repr="    'availability_365': 'Number of days available in a year (0-365)'"
+074: leading=0 repr='}'
+075: leading=0 repr=''
+076: leading=0 repr='for col in df.columns:'
+077: leading=4 repr='    with st.expander(f"**{col}** - {column_descriptions.get(col, \'N/A\')}"):'
+078: leading=8 repr='        col1, col2 = st.columns(2)'
+079: leading=8 repr='        '
+080: leading=8 repr='        with col1:'
+081: leading=12 repr='            st.write("**Data Type:**", df[col].dtype)'
+082: leading=12 repr='            st.write("**Non-Null Count:**", df[col].count())'
+083: leading=12 repr='            st.write("**Null Count:**", df[col].isnull().sum())'
+084: leading=8 repr='        '
+085: leading=8 repr='        with col2:'
+086: leading=12 repr="            if df[col].dtype in ['int64', 'float64']:"
+087: leading=16 repr='                st.write("**Min:**", df[col].min())'
+088: leading=16 repr='                st.write("**Max:**", df[col].max())'
+089: leading=16 repr='                st.write("**Mean:**", df[col].mean().round(2))'
+090: leading=8 repr='        '
+091: leading=8 repr='        # Display unique values or statistical summary'
+092: leading=8 repr="        if df[col].dtype == 'object':"
+093: leading=12 repr='            st.write(f"**Unique Values:** {df[col].nunique()}")'
+094: leading=12 repr='            if df[col].nunique() <= 20:'
+095: leading=16 repr='                st.write("**Value Counts:**")'
+096: leading=16 repr='                st.write(df[col].value_counts())'
+097: leading=8 repr='        else:'
+098: leading=12 repr='            st.write("**Statistical Summary:**")'
+099: leading=12 repr='            st.write(df[col].describe().round(2))'
+100: leading=0 repr=''
+101: leading=0 repr='st.markdown("---")'
+102: leading=0 repr=''
+103: leading=0 repr='# Statistical summary for numerical columns'
+104: leading=0 repr='st.subheader("📊 Statistical Summary of Numerical Columns")'
+105: leading=0 repr="st.dataframe(df.describe().T, width='stretch')"
+106: leading=0 repr=''
+107: leading=0 repr='st.markdown("---")'
+108: leading=0 repr=''
+109: leading=0 repr='# Visualizations'
+110: leading=0 repr='st.subheader("📈 Data Visualizations")'
+111: leading=0 repr=''
+112: leading=0 repr='col1, col2 = st.columns(2)'
+113: leading=0 repr=''
+114: leading=0 repr='with col1:'
+115: leading=4 repr='    st.write("**Room Type Distribution**")'
+116: leading=4 repr="    room_counts = df['room_type'].value_counts()"
+117: leading=4 repr='    fig1 = px.pie(values=room_counts.values, names=room_counts.index, '
+118: leading=19 repr='                   title="Distribution of Room Types")'
+119: leading=4 repr="    st.plotly_chart(fig1, width='stretch')"
+120: leading=0 repr=''
+121: leading=0 repr='with col2:'
+122: leading=4 repr='    st.write("**Listings by Neighbourhood Group**")'
+123: leading=4 repr="    neighbourhood_counts = df['neighbourhood_group'].value_counts()"
+124: leading=4 repr='    fig2 = px.bar(x=neighbourhood_counts.index, y=neighbourhood_counts.values,'
+125: leading=19 repr='                   title="Number of Listings by Neighbourhood Group",'
+126: leading=19 repr="                   labels={'x': 'Neighbourhood Group', 'y': 'Count'})"
+127: leading=4 repr="    st.plotly_chart(fig2, width='stretch')"
+128: leading=0 repr=''
+129: leading=0 repr='col3, col4 = st.columns(2)'
+130: leading=0 repr=''
+131: leading=0 repr='with col3:'
+132: leading=4 repr='    st.write("**Price Distribution**")'
+133: leading=4 repr="    fig3 = px.histogram(df, x='price', nbins=50, "
+134: leading=24 repr='                        title="Distribution of Prices",'
+135: leading=24 repr="                        labels={'price': 'Price (USD)'})"
+136: leading=4 repr="    st.plotly_chart(fig3, width='stretch')"
+137: leading=0 repr=''
+138: leading=0 repr='with col4:'
+139: leading=4 repr='    st.write("**Reviews per Month Distribution**")'
+140: leading=4 repr="    fig4 = px.histogram(df, x='reviews_per_month', nbins=50,"

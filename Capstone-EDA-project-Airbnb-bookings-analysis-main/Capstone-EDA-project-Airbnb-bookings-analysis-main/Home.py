@@ -35,7 +35,7 @@ st.markdown("---")
 
 # Show the first few rows
 st.subheader("📋 First Few Rows of Data")
-st.dataframe(df.head(10), use_container_width=True)
+st.dataframe(df.head(10), width='stretch')
 
 st.markdown("---")
 
@@ -43,12 +43,11 @@ st.markdown("---")
 st.subheader("📌 Data Types and Missing Values")
 data_info = pd.DataFrame({
     'Column': df.columns,
-    'Data Type': df.dtypes.values,
-    'Non-Null Count': df.count().values,
-    'Null Count': df.isnull().sum().values,
-    'Null %': (df.isnull().sum().values / len(df) * 100).round(2)
+    'Data Type': df.dtypes.astype(str).values,
+    'Non-Null Count': df.notnull().sum().values,
+    'Unique Values': df.nunique().values
 })
-st.dataframe(data_info, use_container_width=True)
+st.dataframe(data_info, width='stretch')
 
 st.markdown("---")
 
@@ -103,7 +102,7 @@ st.markdown("---")
 
 # Statistical summary for numerical columns
 st.subheader("📊 Statistical Summary of Numerical Columns")
-st.dataframe(df.describe().T, use_container_width=True)
+st.dataframe(df.describe().T, width='stretch')
 
 st.markdown("---")
 
@@ -117,7 +116,7 @@ with col1:
     room_counts = df['room_type'].value_counts()
     fig1 = px.pie(values=room_counts.values, names=room_counts.index, 
                    title="Distribution of Room Types")
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, width='stretch')
 
 with col2:
     st.write("**Listings by Neighbourhood Group**")
@@ -125,7 +124,7 @@ with col2:
     fig2 = px.bar(x=neighbourhood_counts.index, y=neighbourhood_counts.values,
                    title="Number of Listings by Neighbourhood Group",
                    labels={'x': 'Neighbourhood Group', 'y': 'Count'})
-    st.plotly_chart(fig2, use_container_width=True)
+    st.plotly_chart(fig2, width='stretch')
 
 col3, col4 = st.columns(2)
 
@@ -134,14 +133,14 @@ with col3:
     fig3 = px.histogram(df, x='price', nbins=50, 
                         title="Distribution of Prices",
                         labels={'price': 'Price (USD)'})
-    st.plotly_chart(fig3, use_container_width=True)
+    st.plotly_chart(fig3, width='stretch')
 
 with col4:
     st.write("**Reviews per Month Distribution**")
     fig4 = px.histogram(df, x='reviews_per_month', nbins=50,
                         title="Distribution of Reviews per Month",
                         labels={'reviews_per_month': 'Reviews per Month'})
-    st.plotly_chart(fig4, use_container_width=True)
+    st.plotly_chart(fig4, width='stretch')
 
 # Geographic map
 st.subheader("🗺️ Geographic Distribution of Listings")
